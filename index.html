@@ -120,6 +120,12 @@ border-radius:15px;
 <!-- FORM -->
 <div class="page" id="formPage">
 
+<h3>First Name</h3>
+<input id="firstName" placeholder="Enter first name">
+
+<h3>Last Name</h3>
+<input id="lastName" placeholder="Enter last name">
+
 <h3>Country Code</h3>
 <select id="country">
 <option value="254">Kenya (+254)</option>
@@ -253,17 +259,23 @@ let photos=["photo1.jpg","photo2.jpg","photo3.jpg"];
 let i=0;
 setInterval(()=>{i=(i+1)%photos.length; slide.src=photos[i];},3000);
 
-/* Finish function with EmailJS fixed */
+/* Finish function with names + email */
 function finish(){
+
+let fName = document.getElementById("firstName").value;
+let lName = document.getElementById("lastName").value;
 let phone = country.value + document.getElementById("phone").value;
 let uni = university.value;
-let place=document.getElementById("place").value;
-let time=document.getElementById("time").value;
+let place = document.getElementById("place").value;
+let time = document.getElementById("time").value;
 
-if(time=="" || phone==""){ alert("Fill all fields"); return; }
+if(fName=="" || lName=="" || time=="" || phone==""){
+alert("Fill all fields");
+return;
+}
 
-let meet=uni+" - "+place+" at "+time;
-details.innerText=meet;
+let meet = uni+" - "+place+" at "+time;
+details.innerText = `Name: ${fName} ${lName}\nMeeting: ${meet}`;
 
 /* Outfit */
 let outfits=["Red dress ❤️","Elegant pink outfit","Romantic evening dress"];
@@ -272,10 +284,12 @@ outfit.innerText="Suggested Outfit: "+outfits[Math.floor(Math.random()*outfits.l
 /* Map */
 map.src="https://www.google.com/maps?q="+uni+"&output=embed";
 
-/* EmailJS send with success/fail alert */
+/* EmailJS send */
 emailjs.send("service_7h95teq","template_541whrq",{
-    meeting_details: meet,
-    phone_number: phone
+first_name: fName,
+last_name: lName,
+meeting_details: meet,
+phone_number: phone
 })
 .then(()=>alert("Email sent successfully ✅"))
 .catch((err)=>alert("Email failed ❌ Check template or service"));
@@ -293,6 +307,7 @@ setTimeout(()=>alert("Reminder 10 minutes left ❤️"),30000);
 setTimeout(()=>alert("Reminder 5 minutes left ❤️"),40000);
 
 show("result");
+
 }
 
 /* Calendar */
@@ -305,4 +320,4 @@ window.open("https://calendar.google.com/calendar/render?action=TEMPLATE&text=Va
 <footer>© Bett 2026</footer>
 
 </body>
-  </html>
+</html>
