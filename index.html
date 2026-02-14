@@ -2,229 +2,109 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mildred Ultimate Experience 😄</title>
+<title>Mildred Official Fun Scanner 😂</title>
+
 <style>
 body{
-    font-family: Arial,sans-serif;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg,#ff9a9e,#fad0c4);
     text-align:center;
+    padding:40px;
     color:white;
     overflow:hidden;
-    margin:0;
-    padding:40px;
-    transition: background 2s;
 }
-.screen{
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
+
 button{
     padding:15px 25px;
+    margin:10px;
     font-size:18px;
     border:none;
     border-radius:20px;
     cursor:pointer;
-    color:white;
-    position:absolute;
-    transition:2.5s;
-}
-#output{font-size:22px;margin-top:20px;}
-.heart{
-    position:absolute;
-    font-size:20px;
-    transition:2.5s linear;
-}
-.star{
-    position:absolute;
-    width:2px;
-    height:2px;
     background:white;
+    color:#ff4b7d;
+    position:relative;
+}
+
+button:hover{
+    transform:scale(1.1);
+}
+
+#output{
+    margin-top:30px;
+    font-size:22px;
 }
 </style>
 </head>
+
 <body>
 
-<!-- SCREENS -->
-<div id="screen1" class="screen" style="display:flex;">
-    <h1>🤖 Mildred Personality Scanner</h1>
-    <button id="startScan">Start Scan 🔍</button>
-    <h2 id="scanText"></h2>
-</div>
+<h1>🤖 Mildred Personality Scanner</h1>
+<p>Warning: Results may cause smiling 😂</p>
 
-<div id="screen2" class="screen">
-    <h2>Scan Complete! 😎</h2>
-    <button id="nextToGame">Next ➡️</button>
-</div>
+<button onclick="scan()">Start Scan 🔍</button>
+<button id="runBtn" onmouseover="runAway()">Click For Secret 👀</button>
+<button onclick="joke()">Random Fact 😜</button>
+<button onclick="final()">Final Results 🎉</button>
 
-<div id="screen3" class="screen">
-    <h2>Mini Game 🎮</h2>
-    <button class="gameBtn" id="btn1">Catch Me 1</button>
-    <button class="gameBtn" id="btn2">Catch Me 2</button>
-    <button class="gameBtn" id="btn3">Catch Me 3</button>
-    <h2 id="score">Score: 0</h2>
-</div>
+<h2 id="output"></h2>
 
-<div id="screen4" class="screen">
-    <h2>Random Fun Facts 😜</h2>
-    <button onclick="joke()">Show Me!</button>
-    <h2 id="funOutput"></h2>
-    <button onclick="unlockPhoto()">Next ➡️</button>
-</div>
-
-<div id="screen5" class="screen">
-    <h2>Hidden Photo 📸</h2>
-    <img src="mildred.jpg" style="width:250px;border-radius:20px;">
-    <button onclick="ending()">Final Surprise 🎉</button>
-</div>
-
-<div id="screen6" class="screen">
-    <div id="stars"></div>
-    <h1>✨ I made this whole experience just to make you smile 💖 ✨</h1>
-</div>
-
-<audio id="music" autoplay loop>
+<audio autoplay loop controls>
 <source src="perfect.mp3" type="audio/mpeg">
 </audio>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
 
-// ---- VARIABLES ----
-let score = 0;
-let gameBtns = document.querySelectorAll(".gameBtn");
+// Fake Scanner
+function scan(){
+    let text = "Scanning personality... 🧐";
+    document.getElementById("output").innerHTML = text;
 
-// ---- SCREEN FLOW ----
-function showScreen(id){
-    document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
-    document.getElementById(id).style.display="flex";
-}
-
-// ---- SCREEN1: SCAN ----
-document.getElementById("startScan").addEventListener("click",()=>{
-    let textEl = document.getElementById("scanText");
-    textEl.innerHTML = "Scanning...";
     setTimeout(()=>{
-        showScreen("screen2");
+        document.getElementById("output").innerHTML =
+        "Analysis complete: 98% awesome, 2% too cool to measure 😎";
     },2000);
-});
-
-// ---- SCREEN2: NEXT TO GAME ----
-document.getElementById("nextToGame").addEventListener("click",()=>{
-    showScreen("screen3");
-});
-
-// ---- SCREEN3: MINI GAME ----
-gameBtns.forEach(btn=>{
-    btn.style.top = Math.random()*70 + "%";
-    btn.style.left = Math.random()*70 + "%";
-});
-
-function moveButton(btn){
-    btn.style.top = Math.random()*70 + "%";
-    btn.style.left = Math.random()*70 + "%";
 }
 
-function changeColor(btn){
-    let hue = Math.floor(Math.random()*360);
-    btn.style.background = "hsl("+hue+",80%,60%)";
+// Moving Button
+function runAway(){
+    let btn = document.getElementById("runBtn");
+    btn.style.position = "absolute";
+    btn.style.top = Math.random()*80 + "%";
+    btn.style.left = Math.random()*80 + "%";
 }
 
-// Float + change color every 0.5s
-setInterval(()=>{
-    gameBtns.forEach(btn=>{
-        moveButton(btn);
-        changeColor(btn);
-    });
-},500);
-
-// Button dodge finger (touch)
-document.addEventListener("touchmove", e=>{
-    let touch = e.touches[0];
-    gameBtns.forEach(btn=>{
-        let rect = btn.getBoundingClientRect();
-        if(Math.abs(touch.clientX - rect.left) < 80 && Math.abs(touch.clientY - rect.top) < 50){
-            moveButton(btn);
-        }
-    });
-});
-
-// Click buttons to increase score
-gameBtns.forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        score++;
-        document.getElementById("score").innerHTML = "Score: "+score;
-        if(score>=5){
-            showScreen("screen4");
-        }
-    });
-});
-
-// ---- SCREEN4: FUN FACTS ----
+// Random Funny Messages
 function joke(){
+
     let jokes = [
         "Scientific discovery: Your smile improves global happiness 😂",
         "Warning: You may cause unexpected heart attacks (the good kind 😄)",
         "Breaking news: Someone thinks you're pretty amazing 👀",
         "Doctors recommend 10 minutes of Mildred per day for happiness 😜"
     ];
-    document.getElementById("funOutput").innerHTML = jokes[Math.floor(Math.random()*jokes.length)];
+
+    let random = jokes[Math.floor(Math.random()*jokes.length)];
+
+    document.getElementById("output").innerHTML = random;
 }
 
-function unlockPhoto(){
-    showScreen("screen5");
+// Final Surprise
+function final(){
+
+    document.getElementById("output").innerHTML =
+    "Final result... I made this whole thing just to make you smile 😊";
+
+    confetti({
+        particleCount:200,
+        spread:90,
+        origin:{y:0.6}
+    });
 }
-
-// ---- SCREEN5: FINAL PHOTO ----
-function ending(){
-    showScreen("screen6");
-    let music=document.getElementById("music");
-    let fade=setInterval(()=>{
-        if(music.volume>0.05){music.volume-=0.05;}
-        else{clearInterval(fade);}
-    },300);
-
-    // Starry sky
-    for(let i=0;i<150;i++){
-        let star = document.createElement("div");
-        star.classList.add("star");
-        star.style.top=Math.random()*100+"%";
-        star.style.left=Math.random()*100+"%";
-        document.getElementById("stars").appendChild(star);
-    }
-
-    // Confetti
-    confetti({particleCount:250,spread:90});
-
-}
-
-// ---- BACKGROUND CHANGE EVERY 5S ----
-function randomBackground(){
-    let hue=Math.floor(Math.random()*360);
-    document.body.style.background="linear-gradient(120deg,hsl("+hue+",80%,70%),hsl("+((hue+60)%360)+",80%,80%))";
-}
-setInterval(randomBackground,5000);
-
-// ---- FLOATING HEARTS + MOVE RANDOMLY EVERY 2.5S ----
-function createHeart(){
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerHTML="💖";
-    heart.style.left = Math.random()*100+"vw";
-    heart.style.bottom = "-20px";
-    document.body.appendChild(heart);
-
-    setInterval(()=>{
-        heart.style.left = Math.random()*100+"vw";
-        heart.style.bottom = Math.random()*80+"vh";
-    },2500);
-
-    setTimeout(()=>{heart.remove()},8000);
-}
-setInterval(createHeart,400);
 
 </script>
+
 </body>
 </html>
-
