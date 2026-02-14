@@ -37,7 +37,7 @@ button:hover{
   background-color:#ff3385;
 }
 
-input{
+input, select{
   padding:8px;
   margin:5px;
   width:80%;
@@ -91,11 +91,31 @@ document.addEventListener("click", function(){
   <button onclick="yesAnswer()">YES 😍</button>
 </div>
 
+<!-- County selection -->
+<div class="box" id="countySelect" style="display:none;">
+  <h2>Select a County in Kenya 🇰🇪</h2>
+  <select id="countyDropdown">
+    <option value="">--Choose County--</option>
+    <option value="Nairobi">Nairobi</option>
+    <option value="Mombasa">Mombasa</option>
+    <option value="Kisumu">Kisumu</option>
+    <option value="Kericho">Kericho</option>
+    <option value="Kilifi">Kilifi</option>
+  </select>
+  <button onclick="showRestaurants()">Next</button>
+</div>
+
+<!-- Restaurant selection -->
+<div class="box" id="restaurantSelect" style="display:none;">
+  <h2>Choose a Restaurant</h2>
+  <select id="restaurantDropdown"></select>
+  <button onclick="confirmMeetup()">Confirm Meetup</button>
+</div>
+
 <!-- End page -->
 <div class="box" id="end" style="display:none;">
   <h2 id="endMessage"></h2>
 </div>
-
 
 <script>
 /* Initialize EmailJS */
@@ -144,14 +164,14 @@ let clothingSuggestions = [
   "a playful skirt and top 🌸"
 ];
 
-/* Meeting places around Zetech University */
-let meetingPlaces = [
-  "Zetech Campus Garden",
-  "Main Cafeteria area",
-  "Library Lawn",
-  "Nearby Coffee Spot",
-  "Sports Field"
-];
+/* Restaurants by county */
+const restaurantsByCounty = {
+  "Nairobi": ["Carnivore Restaurant","Haandi Restaurant","About Thyme","Java House"],
+  "Mombasa": ["Forodhani Restaurant","Salt Restaurant","House of Seafood"],
+  "Kisumu": ["The Goan Restaurant","Papa’s Kitchen","Oceanic"],
+  "Kericho": ["Tea Garden Café","Kericho Bistro"],
+  "Kilifi": ["Kilifi Bistro","Oceanview Restaurant"]
+};
 
 /* Start story */
 function startStory(gender){
@@ -167,7 +187,7 @@ function startStory(gender){
 
   if(gender === "male"){
     document.getElementById("end").style.display="block";
-    document.getElementById("endMessage").innerText = "Bye bye my nigga";
+    document.getElementById("endMessage").innerText = "Thank you for visiting ❤️";
     sendEmail("Male visitor:\nName: " + userName + "\nPhone: " + userPhone);
     return;
   }
@@ -199,31 +219,67 @@ function nextPage(){
 /* Valentine YES */
 function yesAnswer(){
   document.getElementById("valentine").style.display="none";
-  document.getElementById("end").style.display="block";
+  document.getElementById("countySelect").style.display="block";
+}
 
-  // Random clothing & meeting place & time
+/* Show restaurants for chosen county */
+function showRestaurants(){
+  let county = document.getElementById("countyDropdown").value;
+  if(county === ""){
+    alert("Please choose a county");
+    return;
+  }
+  
+  let list = restaurantsByCounty[county] || [];
+  let dropdown = document.getElementById("restaurantDropdown");
+  dropdown.innerHTML = "";
+  
+  if(list.length === 0){
+    dropdown.innerHTML = "<option>No restaurants available</option>";
+  } else {
+    list.forEach(r => {
+      let opt = document.createElement("option");
+      opt.value = r;
+      opt.text = r;
+      dropdown.appendChild(opt);
+    });
+  }
+  
+  document.getElementById("countySelect").style.display="none";
+  document.getElementById("restaurantSelect").style.display="block";
+}
+
+/* When meetup is confirmed */
+function confirmMeetup(){
+  let chosenRestaurant = document.getElementById("restaurantDropdown").value;
+  
+  if(chosenRestaurant === ""){
+    alert("Please choose a restaurant");
+    return;
+  }
+  
+  // Random clothing & time
   let clothing = clothingSuggestions[Math.floor(Math.random()*clothingSuggestions.length)];
-  let place = meetingPlaces[Math.floor(Math.random()*meetingPlaces.length)];
-
-  // Random time between 10:00 AM and 8:00 PM
   let hour = Math.floor(Math.random()*10) + 10; // 10 - 19
   let minute = Math.floor(Math.random()*60);
   let ampm = hour < 12 ? "AM" : "PM";
   let displayHour = hour > 12 ? hour - 12 : hour;
   let displayMinute = minute < 10 ? "0"+minute : minute;
   let meetTime = displayHour + ":" + displayMinute + " " + ampm;
-
   let meetDate = "14th"; // fixed
 
+  document.getElementById("restaurantSelect").style.display="none";
+  document.getElementById("end").style.display="block";
+  
   document.getElementById("endMessage").innerText =
     "I have accepted to be your Valentine ❤️🥰\n\n" +
-    "Let's meet at " + place + " on " + meetDate + " at " + meetTime + " and wear " + clothing + " 🌸";
+    "Let's meet at " + chosenRestaurant + " on " + meetDate + " at " + meetTime + " and wear " + clothing + " 🌸";
 
   sendEmail(
     "She accepted your Valentine request ❤️\n" +
     "Name: " + userName + "\n" +
     "Phone: " + userPhone + "\n" +
-    "Meeting place: " + place + "\n" +
+    "Meeting place: " + chosenRestaurant + "\n" +
     "Date: " + meetDate + "\n" +
     "Time: " + meetTime + "\n" +
     "Clothing: " + clothing
@@ -232,9 +288,9 @@ function yesAnswer(){
 
 /* Send email using EmailJS */
 function sendEmail(message){
-  emailjs.send("service_7h95teq","template_541whrq",{
-    message: message
-  });
+  emailjs.send("service_7h95teq","template_541whrq",{message})
+    .then(() => console.log("Email sent!"))
+    .catch(err => console.error("Email failed:", err));
 }
 </script>
 
