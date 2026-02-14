@@ -1,108 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Mildred Official Fun Scanner 😂</title>
+<title>Mildred Movie Experience</title>
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(120deg,#ff9a9e,#fad0c4);
-    text-align:center;
-    padding:40px;
-    color:white;
+    margin:0;
+    font-family:Arial;
     overflow:hidden;
+    background:black;
+    color:white;
 }
 
-button{
+/* SCREENS */
+.screen{
+    position:absolute;
+    width:100%;
+    height:100%;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+}
+
+/* INTRO */
+#intro{
+    display:flex;
+    font-size:40px;
+    animation:fade 4s forwards;
+}
+
+@keyframes fade{
+    0%{opacity:0;}
+    100%{opacity:1;}
+}
+
+/* GAME BUTTON */
+#gameBtn{
+    position:absolute;
     padding:15px 25px;
-    margin:10px;
-    font-size:18px;
-    border:none;
     border-radius:20px;
+    border:none;
     cursor:pointer;
+}
+
+/* CHAT */
+#chatBox{
+    width:80%;
+    max-width:400px;
+    background:#222;
+    padding:20px;
+    border-radius:15px;
+}
+
+/* STAR SKY */
+#stars{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:black;
+}
+
+.star{
+    position:absolute;
+    width:2px;
+    height:2px;
     background:white;
-    color:#ff4b7d;
-    position:relative;
 }
 
-button:hover{
-    transform:scale(1.1);
-}
-
-#output{
-    margin-top:30px;
-    font-size:22px;
+img{
+    width:250px;
+    border-radius:20px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🤖 Mildred Personality Scanner</h1>
-<p>Warning: Results may cause smiling 😂</p>
+<!-- INTRO MOVIE -->
+<div id="intro" class="screen" style="display:flex;">
+🎬 A Mildred Production Presents...
+</div>
 
-<button onclick="scan()">Start Scan 🔍</button>
-<button id="runBtn" onmouseover="runAway()">Click For Secret 👀</button>
-<button onclick="joke()">Random Fact 😜</button>
-<button onclick="final()">Final Results 🎉</button>
+<!-- GAME SCREEN -->
+<div id="game" class="screen">
+<h2>Level 1: Catch The Button 🎮</h2>
+<button id="gameBtn">Catch Me</button>
+<h3 id="score">Score: 0</h3>
+</div>
 
-<h2 id="output"></h2>
+<!-- CHATBOT -->
+<div id="chat" class="screen">
+<div id="chatBox">
+<p id="chatText">Hello Mildred 😊</p>
+<button onclick="nextChat()">Next</button>
+</div>
+</div>
 
-<audio autoplay loop controls>
-<source src="perfect.mp3" type="audio/mpeg">
+<!-- PHOTO -->
+<div id="photoScreen" class="screen">
+<h2>Hidden Memory 📸</h2>
+<img src="mildred.jpg">
+<button onclick="ending()">Continue</button>
+</div>
+
+<!-- ENDING -->
+<div id="ending" class="screen">
+<div id="stars"></div>
+<h1>✨ I made this whole experience just to make you smile 💖 ✨</h1>
+</div>
+
+<audio id="music" autoplay loop>
+<source src="perfect.mp3">
 </audio>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 
-// Fake Scanner
-function scan(){
-    let text = "Scanning personality... 🧐";
-    document.getElementById("output").innerHTML = text;
-
-    setTimeout(()=>{
-        document.getElementById("output").innerHTML =
-        "Analysis complete: 98% awesome, 2% too cool to measure 😎";
-    },2000);
+// SCREEN CONTROL
+function show(screen){
+    document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
+    document.getElementById(screen).style.display="flex";
 }
 
-// Moving Button
-function runAway(){
-    let btn = document.getElementById("runBtn");
-    btn.style.position = "absolute";
-    btn.style.top = Math.random()*80 + "%";
-    btn.style.left = Math.random()*80 + "%";
+// INTRO SEQUENCE
+setTimeout(()=>show("game"),4000);
+
+// GAME LEVELS
+let score=0;
+let btn=document.getElementById("gameBtn");
+
+moveBtn();
+
+function moveBtn(){
+    btn.style.top=Math.random()*80+"%";
+    btn.style.left=Math.random()*80+"%";
 }
 
-// Random Funny Messages
-function joke(){
+btn.onclick=function(){
+    score++;
+    document.getElementById("score").innerHTML="Score: "+score;
+    moveBtn();
 
-    let jokes = [
-        "Scientific discovery: Your smile improves global happiness 😂",
-        "Warning: You may cause unexpected heart attacks (the good kind 😄)",
-        "Breaking news: Someone thinks you're pretty amazing 👀",
-        "Doctors recommend 10 minutes of Mildred per day for happiness 😜"
-    ];
+    if(score==5){
+        show("chat");
+    }
+};
 
-    let random = jokes[Math.floor(Math.random()*jokes.length)];
+// CHATBOT FLOW
+let chatIndex=0;
+let chats=[
+"Hi Mildred 😊",
+"I built this little game for you",
+"You’re actually pretty amazing 😄",
+"I hope this made you smile",
+"Ready for the next surprise?"
+];
 
-    document.getElementById("output").innerHTML = random;
+function nextChat(){
+    chatIndex++;
+    if(chatIndex<chats.length){
+        document.getElementById("chatText").innerHTML=chats[chatIndex];
+    }
+    else{
+        show("photoScreen");
+    }
 }
 
-// Final Surprise
-function final(){
+// ENDING WITH MUSIC FADE + STARS
+function ending(){
 
-    document.getElementById("output").innerHTML =
-    "Final result... I made this whole thing just to make you smile 😊";
+    show("ending");
 
-    confetti({
-        particleCount:200,
-        spread:90,
-        origin:{y:0.6}
-    });
+    // MUSIC FADE
+    let music=document.getElementById("music");
+    let fade=setInterval(()=>{
+        if(music.volume>0.05){
+            music.volume-=0.05;
+        }
+        else{
+            clearInterval(fade);
+        }
+    },300);
+
+    // STAR SKY
+    for(let i=0;i<150;i++){
+        let star=document.createElement("div");
+        star.classList.add("star");
+
+        star.style.top=Math.random()*100+"%";
+        star.style.left=Math.random()*100+"%";
+
+        document.getElementById("stars").appendChild(star);
+    }
 }
+
+// SWIPE NAVIGATION
+let startX=0;
+
+document.addEventListener("touchstart",e=>{
+    startX=e.touches[0].clientX;
+});
+
+document.addEventListener("touchend",e=>{
+    let endX=e.changedTouches[0].clientX;
+
+    if(endX-startX>100){
+        show("game");
+    }
+});
 
 </script>
 
