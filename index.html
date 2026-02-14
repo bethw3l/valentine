@@ -2,253 +2,206 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mildred Ultimate Experience 😄</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💖 A Special Surprise For You 💖</title>
 <style>
-body{
-    font-family: Arial, sans-serif;
-    color:white;
-    margin:0;
-    padding:0;
-    overflow:hidden;
-    transition: background 2s;
-}
-
-/* FIXED HEADER FOR TITLES */
-header{
-    position: fixed;
-    top:0;
-    width:100%;
-    z-index:1000;
-    background: rgba(0,0,0,0.5);
-    padding:15px;
-    text-align:center;
-    font-size:20px;
-}
-
-/* SCREEN CONTAINER */
-.screen{
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    padding-top:60px; /* So titles are visible */
-}
-
-/* BUTTONS */
-button{
-    padding:15px 25px;
-    font-size:18px;
-    border:none;
-    border-radius:20px;
-    cursor:pointer;
-    color:white;
-    position:absolute;
-    transition:0.5s;
-}
-
-/* OUTPUT TEXT */
-#output, #funOutput, #scanText, #score{
-    font-size:22px;
-    margin-top:20px;
-}
-
-/* HEART PARTICLE */
-.heart{
-    position:absolute;
-    font-size:20px;
-    transition:2.5s linear;
-}
-
-/* STARS FOR ENDING */
-.star{
-    position:absolute;
-    width:2px;
-    height:2px;
-    background:white;
-}
+/* Basic Reset & Fonts */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Poppins', sans-serif; overflow-x:hidden; transition: background 2s; position:relative; }
+header { position:fixed; top:0; width:100%; z-index:1000; background: rgba(0,0,0,0.4); padding:15px; text-align:center; font-size:20px; color:white; }
+.floating-hearts { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+.heart { position:fixed; font-size:20px; animation:float 6s linear infinite; opacity:0; }
+@keyframes float { 0%{transform:translateY(100vh) rotate(0deg);opacity:0;} 10%{opacity:0.8;} 90%{opacity:0.8;} 100%{transform:translateY(-100px) rotate(360deg);opacity:0;} }
+.envelope { position:relative; width:300px; height:200px; background:#fff; margin:150px auto; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.2); cursor:pointer; transition: transform 0.3s; z-index:10; }
+.envelope:hover { transform:scale(1.05); }
+.envelope-flap { position:absolute; top:-30px; left:0; width:100%; height:60px; background:#fff; clip-path:polygon(0 0, 100% 0, 50% 100%); transform-origin:top; transition: transform 0.5s; }
+.envelope.open .envelope-flap { transform: rotateX(180deg); }
+.envelope-content { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+.open-btn { padding:10px 20px; font-size:1.2em; background:#ff6b6b; color:white; border:none; border-radius:25px; cursor:pointer; margin-top:20px; transition:all 0.3s; }
+.open-btn:hover { background:#ff5252; transform:scale(1.1); }
+.surprise-content { opacity:0; transition:opacity 1s; position:relative; z-index:5; max-width:1200px; margin:0 auto; padding:20px; }
+.surprise-content.visible { opacity:1; }
+.hidden { display:none; }
+.section-title { font-family:'Dancing Script', cursive; font-size:2.5em; color:#fff; text-shadow:2px 2px 4px rgba(0,0,0,0.2); margin-bottom:30px; text-align:center; }
+.button-group { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; margin:30px 0; }
+.yes-btn,.no-btn,.meter-btn { padding:15px 40px; font-size:1.2em; border:none; border-radius:50px; cursor:pointer; font-weight:600; transition:all 0.3s; }
+.yes-btn { background:#ff6b6b; color:white; }
+.yes-btn:hover { background:#ff5252; transform:scale(1.1); box-shadow:0 5px 20px rgba(255,107,107,0.4); }
+.no-btn { background:#ddd; color:#666; position:relative; }
+.no-btn:hover { background:#ccc; }
+.meter-container { width:100%; height:30px; background:#ddd; border-radius:15px; margin:20px 0; overflow:hidden; cursor:pointer; }
+.love-meter { height:100%; background:linear-gradient(90deg,#ff9a9e,#fad0c4); border-radius:15px; transition:width 0.3s; width:0%; }
+.letter-section { margin:40px 0; text-align:center; }
+.love-letter { background:#fff; padding:40px; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.1); font-family:'Dancing Script', cursive; font-size:1.3em; line-height:1.8; max-width:600px; margin:20px auto; position:relative; }
+.love-letter::before { content:"❤️"; position:absolute; top:-10px; left:-10px; font-size:30px; opacity:0.3; }
+audio { width:100%; max-width:400px; margin:10px auto; }
+.countdown-timer { font-size:2em; font-weight:bold; margin:20px 0; font-family:monospace; text-align:center; color:white; }
+#confettiCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
 </style>
 </head>
 <body>
+<header>💖 A Special Surprise For You 💖</header>
+<div class="floating-hearts" id="floatingHearts"></div>
 
-<header id="title">🤖 Mildred Personality Scanner</header>
-
-<!-- SCREENS -->
-<div id="screen1" class="screen" style="display:flex;">
-    <h1>Start the scan!</h1>
-    <button id="startScan">Start Scan 🔍</button>
-    <h2 id="scanText"></h2>
+<div class="envelope" id="envelope">
+<div class="envelope-flap"></div>
+<div class="envelope-content">
+<h2>✨ A Special Message Awaits ✨</h2>
+<button class="open-btn" onclick="openSurprise()">Open Me 💌</button>
+</div>
 </div>
 
-<div id="screen2" class="screen">
-    <h2>Scan Complete! 😎</h2>
-    <button id="nextToGame">Next ➡️</button>
+<div class="surprise-content hidden" id="surpriseContent">
+<div class="section-title">💫 Memories We Could Make 💫</div>
+<div class="gallery-grid" id="gallery"></div>
+
+<div class="button-group">
+<button class="yes-btn" onclick="handleYes()">Yes! 💖</button>
+<button class="no-btn" id="noBtn" onclick="handleNo()">No 💔</button>
+</div>
+<div id="responseMessage" style="text-align:center;margin:20px;font-size:1.2em;"></div>
+
+<div class="love-meter-section">
+<h3 style="text-align:center;">Our Connection Level</h3>
+<div class="meter-container" onclick="increaseLove()">
+<div class="love-meter" id="loveMeter"></div>
+</div>
+<p id="meterText" style="text-align:center;">Click the meter to test! 💕</p>
+<button class="meter-btn" onclick="increaseLove()">Press for good luck 🍀</button>
 </div>
 
-<div id="screen3" class="screen">
-    <h2>Mini Game 🎮</h2>
-    <button class="gameBtn" id="btn1">Catch Me 1</button>
-    <button class="gameBtn" id="btn2">Catch Me 2</button>
-    <button class="gameBtn" id="btn3">Catch Me 3</button>
-    <h2 id="score">Score: 0</h2>
-</div>
-
-<div id="screen4" class="screen">
-    <h2>Random Fun Facts 😜</h2>
-    <button onclick="joke()">Show Me!</button>
-    <h2 id="funOutput"></h2>
-    <button onclick="unlockPhoto()">Next ➡️</button>
-</div>
-
-<div id="screen5" class="screen">
-    <h2>Hidden Photo 📸</h2>
-    <img src="mildred.jpg" style="width:250px;border-radius:20px;">
-    <button onclick="ending()">Final Surprise 🎉</button>
-</div>
-
-<div id="screen6" class="screen">
-    <div id="stars"></div>
-    <h1>✨ I made this whole experience just to make you smile 💖 ✨</h1>
-</div>
-
-<audio id="music" autoplay loop>
-<source src="perfect.mp3" type="audio/mpeg">
+<div class="music-section" style="text-align:center;margin:30px 0;">
+<h3>🎵 Our Song 🎵</h3>
+<audio id="bgMusic" loop>
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
 </audio>
+<div>
+<button class="yes-btn" onclick="playMusic()">▶️ Play</button>
+<button class="no-btn" onclick="pauseMusic()">⏸️ Pause</button>
+</div>
+<p style="margin-top:10px;">💕 This song reminds me of you 💕</p>
+</div>
+
+<div class="letter-section">
+<div class="love-letter">
+<p>Dear [Your Crush's Name],</p>
+<p>Every time I see you smile, my day gets brighter. I built this little website just for you because you deserve something special. I hope it brings a smile to your face.</p>
+<p>With admiration,<br>[Your Name]</p>
+</div>
+</div>
+
+<div class="countdown-section">
+<h3 style="text-align:center;color:white;">⏰ Time Until I Ask You Out</h3>
+<div class="countdown-timer" id="countdown"></div>
+</div>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-// ---- VARIABLES ----
-let score = 0;
-let gameBtns = document.querySelectorAll(".gameBtn");
-
-// ---- SCREEN FLOW ----
-function showScreen(id){
-    document.querySelectorAll(".screen").forEach(s=>s.style.display="none");
-    document.getElementById(id).style.display="flex";
-}
-
-// ---- SCREEN1: SCAN ----
-document.getElementById("startScan").addEventListener("click",()=>{
-    let textEl = document.getElementById("scanText");
-    textEl.innerHTML = "Scanning...";
-    setTimeout(()=>{
-        showScreen("screen2");
-    },2000);
-});
-
-// ---- SCREEN2: NEXT TO GAME ----
-document.getElementById("nextToGame").addEventListener("click",()=>{
-    showScreen("screen3");
-});
-
-// ---- SCREEN3: MINI GAME ----
-// Initialize buttons in random positions
-gameBtns.forEach(btn=>{
-    btn.style.top = Math.random()*70 + "%";
-    btn.style.left = Math.random()*70 + "%";
-});
-
-function moveButton(btn){
-    btn.style.top = Math.random()*70 + "%";
-    btn.style.left = Math.random()*70 + "%";
-}
-
-function changeColor(btn){
-    let hue = Math.floor(Math.random()*360);
-    btn.style.background = "hsl("+hue+",80%,60%)";
-}
-
-// Float + color change every 0.5s
-setInterval(()=>{
-    gameBtns.forEach(btn=>{
-        moveButton(btn);
-        changeColor(btn);
-    });
-},500);
-
-// Button dodge finger (touch)
-document.addEventListener("touchmove", e=>{
-    let touch = e.touches[0];
-    gameBtns.forEach(btn=>{
-        let rect = btn.getBoundingClientRect();
-        if(Math.abs(touch.clientX - rect.left) < 80 && Math.abs(touch.clientY - rect.top) < 50){
-            moveButton(btn);
-        }
-    });
-});
-
-// Click buttons to increase score
-gameBtns.forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        score++;
-        document.getElementById("score").innerHTML = "Score: "+score;
-        if(score>=5){
-            showScreen("screen4");
-        }
-    });
-});
-
-// ---- SCREEN4: FUN FACTS ----
-function joke(){
-    let jokes = [
-        "Scientific discovery: Your smile improves global happiness 😂",
-        "Warning: You may cause unexpected heart attacks (the good kind 😄)",
-        "Breaking news: Someone thinks you're pretty amazing 👀",
-        "Doctors recommend 10 minutes of Mildred per day for happiness 😜"
-    ];
-    document.getElementById("funOutput").innerHTML = jokes[Math.floor(Math.random()*jokes.length)];
-}
-
-function unlockPhoto(){
-    showScreen("screen5");
-}
-
-// ---- SCREEN5: FINAL PHOTO ----
-function ending(){
-    showScreen("screen6");
-    let music=document.getElementById("music");
-    let fade=setInterval(()=>{
-        if(music.volume>0.05){music.volume-=0.05;}
-        else{clearInterval(fade);}
-    },300);
-
-    // Starry sky
-    for(let i=0;i<150;i++){
-        let star = document.createElement("div");
-        star.classList.add("star");
-        star.style.top=Math.random()*100+"%";
-        star.style.left=Math.random()*100+"%";
-        document.getElementById("stars").appendChild(star);
-    }
-
-    // Confetti
-    confetti({particleCount:250,spread:90});
-}
-
-// ---- BACKGROUND CHANGE EVERY 5S ----
-function randomBackground(){
-    let hue=Math.floor(Math.random()*360);
-    document.body.style.background="linear-gradient(120deg,hsl("+hue+",80%,70%),hsl("+((hue+60)%360)+",80%,80%))";
-}
-setInterval(randomBackground,5000);
-
-// ---- FLOATING HEARTS + MOVE RANDOMLY EVERY 2.5S ----
-function createHeart(){
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    heart.innerHTML="💖";
-    heart.style.left = Math.random()*100+"vw";
-    heart.style.bottom = "-20px";
-    document.body.appendChild(heart);
-
-    setInterval(()=>{
-        heart.style.left = Math.random()*100+"vw";
-        heart.style.bottom = Math.random()*80+"vh";
-    },2500);
-
+// Floating Hearts
+function createFloatingHeart() {
+    const heartsContainer = document.getElementById('floatingHearts');
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.innerHTML = '❤️';
+    heart.style.left = Math.random() * 100 + '%';
+    heart.style.animationDuration = (Math.random()*3+4)+'s';
+    heart.style.fontSize = (Math.random()*20+15)+'px';
+    heartsContainer.appendChild(heart);
     setTimeout(()=>{heart.remove()},8000);
 }
-setInterval(createHeart,400);
+setInterval(createFloatingHeart,800);
+
+// Envelope Open
+function openSurprise() {
+    const envelope = document.getElementById('envelope');
+    const surpriseContent = document.getElementById('surpriseContent');
+    envelope.classList.add('open');
+    setTimeout(()=>{
+        envelope.style.display='none';
+        surpriseContent.classList.remove('hidden');
+        setTimeout(()=>{surpriseContent.classList.add('visible'); populateGallery();},100);
+    },500);
+}
+
+// Gallery
+function populateGallery() {
+    const gallery = document.getElementById('gallery');
+    const memories=['☕ Coffee Date','🌅 Sunset','🍕 Pizza Night','🎬 Movies','🌸 Flowers','💑 Us'];
+    memories.forEach((mem,i)=>{
+        const item=document.createElement('div');
+        item.style.background='#f0f0f0';
+        item.style.borderRadius='15px';
+        item.style.height='150px';
+        item.style.display='flex';
+        item.style.alignItems='center';
+        item.style.justifyContent='center';
+        item.style.fontSize='2em';
+        item.style.margin='10px';
+        item.style.cursor='pointer';
+        item.innerText=mem;
+        item.onclick=()=>{alert("This reminds me of you: "+mem);}
+        gallery.appendChild(item);
+    });
+}
+
+// Handle Yes/No
+function handleYes() {
+    document.getElementById('responseMessage').innerHTML='🎉 YAY! You made me the happiest person! 🎉 💖';
+    for(let i=0;i<30;i++){setTimeout(()=>{createFloatingHeart()},i*100);}
+    confetti({particleCount:200,spread:90});
+    playMusic();
+}
+function handleNo() {
+    const noBtn=document.getElementById('noBtn');
+    const maxX=window.innerWidth-noBtn.offsetWidth-20;
+    const maxY=window.innerHeight-noBtn.offsetHeight-20;
+    noBtn.style.position='fixed';
+    noBtn.style.left=Math.random()*maxX+'px';
+    noBtn.style.top=Math.random()*maxY+'px';
+    noBtn.style.zIndex='9999';
+    const messages=["Oops! Try again! 😊","That button seems broken! 💕","Click the other one! ✨","Nice try! But I know you mean Yes! 💖"];
+    document.getElementById('responseMessage').innerText=messages[Math.floor(Math.random()*messages.length)];
+}
+
+// Love Meter
+function increaseLove() {
+    const meter=document.getElementById('loveMeter');
+    const meterText=document.getElementById('meterText');
+    let w=parseInt(meter.style.width)||0;
+    if(w<100){let nw=Math.min(w+10,100); meter.style.width=nw+'%';
+        if(nw===100){meterText.innerText="💖 It's 100%! We're meant to be! 💖"; confetti({particleCount:200,spread:90});}
+        else{const msg=["Getting warmer! 🔥","Our connection grows! 🌱","This is special! 💫","Almost there! ⭐"]; meterText.innerText=msg[Math.floor(Math.random()*msg.length)];}
+    }
+}
+
+// Music
+function playMusic(){document.getElementById('bgMusic').play();}
+function pauseMusic(){document.getElementById('bgMusic').pause();}
+
+// Countdown Timer
+function updateCountdown(){
+    const countdown=document.getElementById('countdown');
+    const target=new Date();
+    target.setHours(target.getHours()+1); // 1 hour countdown
+    setInterval(()=>{
+        const now=new Date();
+        const diff=Math.max(0,(target-now)/1000);
+        const h=Math.floor(diff/3600); const m=Math.floor((diff%3600)/60); const s=Math.floor(diff%60);
+        countdown.innerText=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    },1000);
+}
+updateCountdown();
+
+// Background Color Change
+setInterval(()=>{
+    let h=Math.floor(Math.random()*360);
+    document.body.style.background=`linear-gradient(135deg,hsl(${h},80%,70%),hsl(${(h+60)%360},80%,80%))`;
+},5000);
+
 </script>
 </body>
 </html>
