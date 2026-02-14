@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For Someone Special ❤️</title>
+<!-- LIVE CLOCK SECTION -->
+<section class="card">
+<h2>⏰ Our Time Together</h2>
+
+<p>🇰🇪 Your Time</p>
+<div id="kenyaClock" class="clock"></div>
+
+<p>🇺🇸 My Time (Pacific Time)</p>
+<div id="usaClock" class="clock"></div>
+
+</section>
 
 <style>
 
@@ -226,10 +237,23 @@ setInterval(()=>{
     setTimeout(()=> heart.remove(),6000);
 
 },800);
+/* LIVE CLOCKS */
+function updateClocks(){
+
+    let kenyaTime = new Date().toLocaleTimeString("en-GB",{timeZone:"Africa/Nairobi"});
+    let usaTime = new Date().toLocaleTimeString("en-US",{timeZone:"America/Los_Angeles"});
+
+    document.getElementById("kenyaClock").innerText = kenyaTime;
+    document.getElementById("usaClock").innerText = usaTime;
+}
+
+setInterval(updateClocks,1000);
+updateClocks();
 
 </script>
 
 </body>
 </html>
+
 
 
