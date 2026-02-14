@@ -4,40 +4,22 @@
 <meta charset="UTF-8">
 <title>Valentine Surprise ❤️</title>
 
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
 <style>
 
 body{
-text-align:center;
 background:deeppink;
 color:white;
-overflow-x:hidden;
+font-family:Verdana;
+text-align:center;
 margin:0;
+overflow-x:hidden;
 }
 
-/* Floating Hearts */
-.heart{
-position:fixed;
-bottom:-10px;
-animation:float 5s linear infinite;
-}
+.page{display:none;padding:20px;}
+.active{display:block;}
 
-@keyframes float{
-0%{transform:translateY(0);}
-100%{transform:translateY(-100vh);}
-}
-
-/* Pages */
-.page{
-display:none;
-margin-top:80px;
-padding:20px;
-}
-
-.active{
-display:block;
-}
-
-/* Buttons */
 button{
 padding:12px 25px;
 font-size:18px;
@@ -45,16 +27,36 @@ border:none;
 border-radius:12px;
 margin:10px;
 cursor:pointer;
+background:white;
+color:deeppink;
 }
 
-/* Music controls */
-.music{
+img{
+max-width:90%;
+border-radius:15px;
+}
+
+/* Hearts */
+.heart{
 position:fixed;
-top:10px;
-right:10px;
+bottom:-10px;
+font-size:20px;
+animation:float 6s linear infinite;
+}
+@keyframes float{
+100%{transform:translateY(-100vh);}
 }
 
-/* Footer */
+/* Fireworks */
+.firework{
+position:fixed;
+font-size:30px;
+animation:explode 1s forwards;
+}
+@keyframes explode{
+100%{transform:scale(3);opacity:0;}
+}
+
 footer{
 position:fixed;
 bottom:5px;
@@ -67,75 +69,136 @@ font-size:12px;
 
 <body>
 
-<!-- MUSIC -->
 <audio id="music" loop>
-<source src="perfect.mp3" type="audio/mp3">
+<source src="perfect.mp3">
 </audio>
 
-<div class="music">
-<button onclick="music.play()">▶</button>
-<button onclick="music.pause()">⏸</button>
-</div>
+<button onclick="music.play()">Play Music 🎵</button>
 
 <h2 id="countdown"></h2>
 
-<!-- PAGE 1 -->
-<div class="page active" id="page1">
-<h1>Select Gender</h1>
+<!-- GENDER PAGE (NOW FIRST PAGE) -->
+<div class="page active" id="genderPage">
+<h2>Select Gender</h2>
 <button onclick="female()">Female</button>
 <button onclick="male()">Male</button>
 </div>
 
-<!-- FLIRT PAGES -->
-<div class="page" id="page2">
-<h1>You look beautiful today 😍</h1>
-<button onclick="show(3)">Next</button>
+<div class="page" id="malePage">
+<h2>Thanks for visiting 💙</h2>
 </div>
 
-<div class="page" id="page3">
-<h1>You make life brighter 💕</h1>
-<button onclick="show(4)">Next</button>
+<!-- FLIRT FLOW -->
+<div class="page" id="p1">
+<h2>You have a beautiful smile 😍</h2>
+<button onclick="show('p2')">Next</button>
 </div>
 
-<div class="page" id="page4">
-<h1>I love your smile ✨</h1>
-<button onclick="show(5)">Next</button>
+<div class="page" id="p2">
+<h2>You make my world brighter 💕</h2>
+<button onclick="show('p3')">Next</button>
 </div>
 
-<div class="page" id="page5">
-<h1>I enjoy every moment with you ❤️</h1>
-<button onclick="show(6)">Next</button>
+<div class="page" id="p3">
+<h2>I enjoy every moment with you ✨</h2>
+<button onclick="show('p4')">Next</button>
 </div>
 
-<div class="page" id="page6">
-<h1>Will you be my Valentine?</h1>
+<div class="page" id="p4">
+<h2>Will you be my Valentine ❤️</h2>
 <button onclick="accepted()">YES</button>
 <button onclick="accepted()">YES</button>
 </div>
 
 <!-- FORM -->
-<div class="page" id="page7">
-<h2>Enter Phone Number</h2>
+<div class="page" id="formPage">
+
+<h3>Country Code</h3>
+<select id="country">
+<option value="254">Kenya (+254)</option>
+<option value="255">Tanzania (+255)</option>
+<option value="256">Uganda (+256)</option>
+<option value="1">USA (+1)</option>
+<option value="44">UK (+44)</option>
+</select>
+
+<h3>Phone Number</h3>
 <input id="phone"><br><br>
 
-<h2>What time are you available on Feb 14?</h2>
-<input type="time" id="time"><br><br>
+<h3>Select University</h3>
+<select id="university">
+<option>University of Nairobi</option>
+<option>Moi University</option>
+<option>Kenyatta University</option>
+<option>Egerton University</option>
+<option>Maseno University</option>
+<option>Masinde Muliro University</option>
+<option>Dedan Kimathi University</option>
+<option>JKUAT</option>
+<option>Technical University of Kenya</option>
+<option>Technical University of Mombasa</option>
+<option>Pwani University</option>
+<option>Kisii University</option>
+<option>Chuka University</option>
+<option>Laikipia University</option>
+<option>South Eastern Kenya University</option>
+<option>Karatina University</option>
+<option>Kibabii University</option>
+<option>Kirinyaga University</option>
+<option>Murang’a University</option>
+<option>Maasai Mara University</option>
+<option>University of Eldoret</option>
+<option>Taita Taveta University</option>
+<option>Multimedia University</option>
+<option>Rongo University</option>
+<option>Co-operative University</option>
+<option>Strathmore University</option>
+<option>USIU</option>
+<option>Daystar University</option>
+<option>Africa Nazarene University</option>
+<option>Catholic University of Eastern Africa</option>
+<option>Mount Kenya University</option>
+<option>Zetech University</option>
+<option>Kabarak University</option>
+<option>Kenya Methodist University</option>
+<option>KCA University</option>
+<option>St. Paul’s University</option>
+<option>Riara University</option>
+<option>Management University of Africa</option>
+<option>Amref International University</option>
+</select>
+
+<h3>Select Meeting Place</h3>
+<select id="place">
+<option>Main Gate</option>
+<option>Library</option>
+<option>Cafeteria</option>
+<option>Garden</option>
+<option>Student Centre</option>
+<option>Parking Area</option>
+</select>
+
+<h3>Available Time Feb 14</h3>
+<input id="time" type="time"><br><br>
 
 <button onclick="finish()">Submit</button>
+
 </div>
 
 <!-- RESULT -->
-<div class="page" id="page8">
+<div class="page" id="resultPage">
 
-<h1>I HAVE ACCEPTED TO BE YOUR VALENTINE ❤️</h1>
+<h2>I HAVE ACCEPTED TO BE YOUR VALENTINE ❤️</h2>
 
+<p id="details"></p>
 <p id="outfit"></p>
-<p id="place"></p>
 
-<button onclick="compliment()">Give me a compliment</button>
+<button onclick="compliment()">Romantic Compliment 💌</button>
 <p id="complimentText"></p>
 
-<iframe id="map" width="300" height="200"></iframe><br><br>
+<iframe id="map" width="300" height="200"></iframe>
+
+<img id="slideshow" src="photo1.jpg">
 
 <button onclick="calendar()">Add To Calendar</button>
 
@@ -143,141 +206,112 @@ font-size:12px;
 
 <script>
 
+emailjs.init("gUxDJTQCgr53kVpTU");
+
 /* Navigation */
-function show(p){
-document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
-document.getElementById("page"+p).classList.add("active");
+function show(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 }
 
-/* Female */
-function female(){
-show(2);
-music.play();
+function female(){show("p1");}
+function male(){show("malePage");}
+
+/* Hearts */
+setInterval(()=>{
+let h=document.createElement("div");
+h.innerHTML="❤️";
+h.className="heart";
+h.style.left=Math.random()*100+"vw";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),6000);
+},500);
+
+/* Fireworks */
+function fireworks(){
+for(let i=0;i<20;i++){
+let f=document.createElement("div");
+f.innerHTML="🎆";
+f.className="firework";
+f.style.left=Math.random()*100+"vw";
+f.style.top=Math.random()*100+"vh";
+document.body.appendChild(f);
+setTimeout(()=>f.remove(),1000);
+}
 }
 
-/* Male Exit Animation */
-function male(){
-
-document.body.innerHTML="<h1 id='byeText'></h1>";
-
-let words=["Bye","Bye","my","nigga","👋","👋"];
-
-let i=0;
-
-let interval=setInterval(()=>{
-if(i<words.length){
-document.getElementById("byeText").innerHTML+=words[i]+" ";
-createByeBubble();
-i++;
-}else{
-clearInterval(interval);
-}
-},1000);
-}
-
-/* Bye Bubble */
-function createByeBubble(){
-let bubble=document.createElement("div");
-bubble.innerHTML="👋";
-bubble.className="heart";
-bubble.style.left=Math.random()*100+"vw";
-bubble.style.fontSize=(20+Math.random()*40)+"px";
-document.body.appendChild(bubble);
-setTimeout(()=>bubble.remove(),4000);
-}
-
-/* YES Celebration */
 function accepted(){
-show(7);
-
-for(let i=0;i<40;i++){
-setTimeout(()=>{
-let heart=document.createElement("div");
-heart.innerHTML="❤️";
-heart.className="heart";
-heart.style.left=Math.random()*100+"vw";
-heart.style.fontSize=(20+Math.random()*40)+"px";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),4000);
-},i*100);
-}
-}
-
-/* Finish */
-function finish(){
-
-let outfits=[
-"Wear a red dress ❤️",
-"Wear a pink outfit 💕",
-"Wear something classy and elegant",
-"Wear something comfortable and beautiful"
-];
-
-let places=[
-"Zetech University Main Gate",
-"Cafe near Zetech University",
-"Garden area around Zetech",
-"Restaurant around Zetech University"
-];
-
-let outfit=outfits[Math.floor(Math.random()*outfits.length)];
-let place=places[Math.floor(Math.random()*places.length)];
-let time=document.getElementById("time").value;
-
-document.getElementById("outfit").innerText="Outfit: "+outfit;
-document.getElementById("place").innerText="Meetup: "+place+" at "+time;
-
-document.getElementById("map").src=
-"https://www.google.com/maps?q="+place+"&output=embed";
-
-show(8);
-}
-
-/* Compliments */
-let compliments=[
-"You are stunning",
-"You make my heart peaceful",
-"You are my favorite person",
-"Your smile is magical",
-"You make everything better"
-];
-
-function compliment(){
-let c=compliments[Math.floor(Math.random()*compliments.length)];
-document.getElementById("complimentText").innerText=c;
+fireworks();
+show("formPage");
 }
 
 /* Countdown */
-let target=new Date("Feb 14, 2026 00:00:00").getTime();
-
+let target=new Date("Feb 14, 2026").getTime();
 setInterval(()=>{
 let now=new Date().getTime();
 let diff=target-now;
-
 let d=Math.floor(diff/(1000*60*60*24));
 let h=Math.floor((diff%(1000*60*60*24))/(1000*60*60));
 let m=Math.floor((diff%(1000*60*60))/(1000*60));
 let s=Math.floor((diff%(1000*60))/1000);
-
-document.getElementById("countdown").innerHTML=
-"Countdown to Feb 14: "+d+"d "+h+"h "+m+"m "+s+"s";
-
+countdown.innerHTML=`Countdown: ${d}d ${h}h ${m}m ${s}s`;
 },1000);
+
+/* Compliments */
+let compliments=["You are stunning","You make my life brighter","You are unforgettable"];
+function compliment(){
+complimentText.innerText=compliments[Math.floor(Math.random()*compliments.length)];
+}
+
+/* Slideshow */
+let photos=["photo1.jpg","photo2.jpg","photo3.jpg"];
+let i=0;
+setInterval(()=>{
+i=(i+1)%photos.length;
+slideshow.src=photos[i];
+},3000);
+
+/* Finish */
+function finish(){
+
+let phone=country.value + document.getElementById("phone").value;
+let uni=university.value;
+let place=place.value;
+let time=document.getElementById("time").value;
+
+let meet=uni+" - "+place+" at "+time;
+
+details.innerText=meet;
+
+let outfits=["Red dress ❤️","Elegant outfit","Pink outfit"];
+outfit.innerText="Suggested Outfit: "+outfits[Math.floor(Math.random()*outfits.length)];
+
+map.src="https://www.google.com/maps?q="+uni+"&output=embed";
+
+/* Email */
+emailjs.send("service_7h95teq","template_541whrq",{meet_place:meet});
+
+/* WhatsApp */
+window.open("https://wa.me/"+phone+"?text=Hi ❤️ I accepted Valentine. Meeting at "+meet);
+window.open("https://wa.me/13165168543?text=She accepted ❤️ Meeting at "+meet);
+
+/* Reminder Simulation */
+setTimeout(()=>alert("Reminder 30 minutes left ❤️"),10000);
+setTimeout(()=>alert("Reminder 20 minutes left ❤️"),20000);
+setTimeout(()=>alert("Reminder 10 minutes left ❤️"),30000);
+setTimeout(()=>alert("Reminder 5 minutes left ❤️"),40000);
+
+show("resultPage");
+}
 
 /* Calendar */
 function calendar(){
-let date="20260214T120000";
-window.open(
-"https://calendar.google.com/calendar/render?action=TEMPLATE&text=Valentine Date&dates="+date+"/"+date+"&details=Valentine Meetup"
-);
+window.open("https://calendar.google.com/calendar/render?action=TEMPLATE&text=Valentine Date");
 }
 
 </script>
 
-<footer>
-© Bett 2026
-</footer>
+<footer>© Bett 2026</footer>
 
 </body>
 </html>
-
