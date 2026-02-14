@@ -3,137 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💖 For Mildred – From Across the Miles 💖</title>
+<title>For Someone Special ❤️</title>
+
 <style>
-/* Reset & Fonts */
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Poppins', sans-serif; overflow-x:hidden; transition: background 2s; position:relative; min-height:100vh; text-align:center; color:#fff; }
-header { font-size:2em; margin-top:50px; font-weight:600; text-shadow:2px 2px 4px rgba(0,0,0,0.3); }
-.floating-hearts { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
-.heart { position:fixed; font-size:20px; animation:float 6s linear infinite; opacity:0; }
-@keyframes float { 0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.8;}90%{opacity:0.8;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;} }
 
-.message-box { background: rgba(0,0,0,0.4); margin:50px auto; padding:30px; border-radius:20px; max-width:600px; font-size:1.2em; line-height:1.6em; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
-.verse { margin-top:20px; font-style:italic; font-size:1.1em; color:#ffd700; }
+body{
+    font-family: Arial, sans-serif;
+    text-align:center;
+    margin:0;
+    color:white;
+    overflow-x:hidden;
+    transition: background 2s;
+}
 
-button { padding:15px 25px; font-size:1.1em; border:none; border-radius:20px; cursor:pointer; margin-top:20px; background:#ff6b6b; color:white; transition:0.3s; }
-button:hover { transform:scale(1.1); background:#ff5252; }
+section{
+    padding:50px;
+}
 
-.gallery-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:15px; margin-top:20px; }
-.gallery-item { background:rgba(255,255,255,0.2); padding:20px; border-radius:15px; cursor:pointer; font-size:1.2em; transition:transform 0.3s; }
-.gallery-item:hover { transform:scale(1.05); }
+.card{
+    background: rgba(0,0,0,0.5);
+    padding:20px;
+    margin:20px;
+    border-radius:15px;
+}
 
-.love-meter-container { width:80%; height:25px; background:#ddd; border-radius:15px; margin:20px auto; overflow:hidden; cursor:pointer; }
-.love-meter { height:100%; background:linear-gradient(90deg,#ff9a9e,#fad0c4); width:0%; border-radius:15px; transition:width 0.3s; }
+/* Photo Carousel */
+.carousel{
+    width:80%;
+    margin:auto;
+    overflow:hidden;
+}
 
-#confettiCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
-audio { margin-top:15px; width:100%; max-width:400px; }
+.carousel img{
+    width:100%;
+    border-radius:15px;
+    cursor:pointer;
+}
+
+/* Fullscreen Gallery */
+#fullscreen{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    justify-content:center;
+    align-items:center;
+}
+
+#fullscreen img{
+    max-width:90%;
+    max-height:90%;
+}
+
+/* Floating Hearts */
+.heart{
+    position:fixed;
+    bottom:-20px;
+    font-size:20px;
+    animation: float 6s linear infinite;
+}
+
+@keyframes float{
+    0%{ transform:translateY(0);}
+    100%{ transform:translateY(-100vh);}
+}
+
+/* Popup */
+#popup{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#popupContent{
+    background:white;
+    color:black;
+    padding:30px;
+    border-radius:15px;
+}
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:pink;
+    cursor:pointer;
+}
 
 </style>
 </head>
+
 <body>
-<div class="floating-hearts" id="floatingHearts"></div>
 
-<header>Hey Mildred! 💖</header>
-
-<div class="message-box">
-<p>I miss you so much while you’re at university in Kenya! 🌸</p>
-<p>I’m sending you all my love, encouragement, and prayers from here in the United States. You’re amazing and I believe in you!</p>
-<p class="verse">“The steadfast love of the Lord never ceases; his mercies never come to an end; they are new every morning; great is your faithfulness.” <br>— Lamentations 3:22-23</p>
-<button onclick="sendBlessing()">💌 Send Me a Blessing 💌</button>
-<h2 id="blessingOutput" style="margin-top:15px;"></h2>
+<!-- Popup -->
+<div id="popup">
+    <div id="popupContent">
+        <h2>❤️ A Message For You</h2>
+        <p>You crossed my mind today… like you always do.</p>
+        <button onclick="closePopup()">Open Website</button>
+    </div>
 </div>
 
-<div class="message-box">
-<h3>💫 Memories & Things I Love About You 💫</h3>
-<div class="gallery-grid" id="gallery"></div>
-</div>
-
-<div class="message-box">
-<h3>❤️ My Love Meter ❤️</h3>
-<div class="love-meter-container" onclick="increaseLove()">
-<div class="love-meter" id="loveMeter"></div>
-</div>
-<p id="meterText">Tap the meter to see my love grow! 💕</p>
-</div>
-
-<div class="message-box">
-<h3>🎵 Our Song 🎵</h3>
-<audio id="bgMusic" loop>
-<source src="perfect.mp3" type="audio/mpeg">
+<!-- Background Music -->
+<audio autoplay loop>
+    <source src="perfect.mp3" type="audio/mpeg">
 </audio>
-<div>
-<button onclick="playMusic()">▶️ Play</button>
-<button onclick="pauseMusic()">⏸️ Pause</button>
-</div>
-<p>Every time it plays, think of me ❤️</p>
+
+<h1>💖 For Someone Very Special 💖</h1>
+
+<!-- Love Letter -->
+<section class="card">
+<h2>💌 A Message From My Heart</h2>
+<p>
+Even though distance separates us, you are always in my thoughts.
+You bring peace and happiness into my life.
+</p>
+</section>
+
+<!-- Carousel -->
+<section class="card">
+<h2>📷 Memories</h2>
+
+<div class="carousel">
+    <img id="carouselImg" src="photo1.jpg" onclick="openFullscreen(this.src)">
 </div>
 
-<canvas id="confettiCanvas"></canvas>
+</section>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<!-- Quiz -->
+<section class="card">
+<h2>🎮 Mini Quiz</h2>
+<p>What makes you special to me?</p>
+<button onclick="quiz(true)">Your heart and personality</button>
+<button onclick="quiz(false)">Just luck</button>
+<p id="quizResult"></p>
+</section>
+
+<!-- Scripture -->
+<section class="card">
+<h2>🙏 A Verse For You</h2>
+<p>
+"The steadfast love of the Lord never ceases,<br>
+his mercies never come to an end;<br>
+they are new every morning;<br>
+great is thy faithfulness."
+</p>
+<p>— Lamentations 3:22-23 (RSV)</p>
+</section>
+
+<!-- Fullscreen Gallery -->
+<div id="fullscreen" onclick="closeFullscreen()">
+    <img id="fullImg">
+</div>
+
 <script>
-// Floating Hearts
-function createHeart() {
-  const heartsContainer = document.getElementById('floatingHearts');
-  const heart = document.createElement('div');
-  heart.className='heart';
-  heart.innerHTML='💖';
-  heart.style.left=Math.random()*100+'vw';
-  heart.style.fontSize=(15+Math.random()*25)+'px';
-  heartsContainer.appendChild(heart);
-  setTimeout(()=>heart.remove(),8000);
-}
-setInterval(createHeart,600);
 
-// Send Blessings
-function sendBlessing() {
-  const messages = [
-    "May your day be filled with joy and success! 🌸",
-    "I love you and miss you every moment 💖",
-    "Keep shining, Mildred! You’re amazing ✨",
-    "I’m cheering for you always! 📚💫"
-  ];
-  const random = messages[Math.floor(Math.random()*messages.length)];
-  document.getElementById('blessingOutput').innerText=random;
-  confetti({particleCount:50,spread:60,origin:{y:0.6}});
-  document.getElementById('bgMusic').play().catch(()=>console.log("Click play to start music"));
-}
-
-// Gallery
-function populateGallery() {
-  const gallery = document.getElementById('gallery');
-  const items = ['☕ Coffee Dates','🌅 Sunsets','🍕 Pizza Nights','🎬 Movie Nights','🌸 Flowers','💑 Us'];
-  items.forEach((it,i)=>{
-    const div=document.createElement('div');
-    div.className='gallery-item';
-    div.innerText=it;
-    div.onclick=()=>alert("I miss these moments with you: "+it);
-    gallery.appendChild(div);
-  });
-}
-populateGallery();
-
-// Love Meter
-function increaseLove() {
-  const meter = document.getElementById('loveMeter');
-  const meterText = document.getElementById('meterText');
-  let w=parseInt(meter.style.width)||0;
-  if(w<100){ let nw=Math.min(w+10,100); meter.style.width=nw+'%';
-    if(nw===100){meterText.innerText="💖 My love is full for you! 💖"; confetti({particleCount:100,spread:90});}
-    else { const msgs=["More love for you! ❤️","Always thinking of you 💫","My heart beats for you 💖","You make me smile! 🌸"]; meterText.innerText=msgs[Math.floor(Math.random()*msgs.length)];}
-  }
-}
-
-// Music
-function playMusic(){document.getElementById('bgMusic').play();}
-function pauseMusic(){document.getElementById('bgMusic').pause();}
-
-// Background Gradient Change
+/* Background color changer */
+let colors=["#ff758c","#ff7eb3","#6a11cb","#2575fc","#ff9966"];
+let i=0;
 setInterval(()=>{
-  let h=Math.floor(Math.random()*360);
-  document.body.style.background=`linear-gradient(120deg,hsl(${h},80%,70%),hsl(${(h+60)%360},80%,80%))`;
-},7000);
+    document.body.style.background=colors[i];
+    i=(i+1)%colors.length;
+},3000);
+
+/* Popup */
+function closePopup(){
+    document.getElementById("popup").style.display="none";
+}
+
+/* Carousel */
+let photos=["photo1.jpg","photo2.jpg","photo3.jpg","photo4.jpg"];
+let index=0;
+
+setInterval(()=>{
+    index=(index+1)%photos.length;
+    document.getElementById("carouselImg").src=photos[index];
+},3000);
+
+/* Fullscreen Gallery */
+function openFullscreen(src){
+    document.getElementById("fullscreen").style.display="flex";
+    document.getElementById("fullImg").src=src;
+}
+
+function closeFullscreen(){
+    document.getElementById("fullscreen").style.display="none";
+}
+
+/* Quiz */
+function quiz(correct){
+    if(correct)
+        document.getElementById("quizResult").innerText="Exactly ❤️";
+    else
+        document.getElementById("quizResult").innerText="Nooo 😄 You are special because of who you are!";
+}
+
+/* Floating Hearts Generator */
+setInterval(()=>{
+    let heart=document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(Math.random()*20+15)+"px";
+
+    document.body.appendChild(heart);
+
+    setTimeout(()=> heart.remove(),6000);
+
+},800);
+
 </script>
+
 </body>
 </html>
