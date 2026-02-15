@@ -7,7 +7,6 @@
 
 <style>
 
-/* GENERAL */
 body{
     font-family: Arial, sans-serif;
     text-align:center;
@@ -26,65 +25,33 @@ section{ padding:50px; }
     border-radius:15px;
 }
 
-/* Scroll Love Progress */
-#loveBar{
+/* Carousel */
+.carousel{ width:80%; margin:auto; }
+.carousel img{ width:100%; border-radius:15px; cursor:pointer; }
+
+/* Fullscreen */
+#fullscreen{
+    display:none;
     position:fixed;
     top:0;
     left:0;
-    height:6px;
-    background:pink;
-    width:0%;
-    z-index:999;
+    width:100%;
+    height:100%;
+    background:black;
+    justify-content:center;
+    align-items:center;
 }
 
-/* Carousel */
-.carousel img{
-    width:80%;
-    border-radius:15px;
-    cursor:pointer;
+#fullscreen img{
+    max-width:90%;
+    max-height:90%;
 }
 
-/* Verse Style */
-.gradientVerse{
-    font-size:22px;
-    font-weight:bold;
-    background: linear-gradient(45deg,#ff6b81,#ffd166,#06d6a0,#4cc9f0,#c77dff);
-    background-size:300%;
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation: gradientMove 6s infinite linear;
-    transition: opacity 0.8s;
-}
-
-@keyframes gradientMove{
-    0%{background-position:0%}
-    100%{background-position:300%}
-}
-
-.verseMessage{
-    font-style:italic;
-    margin-top:10px;
-}
-
-/* Mood Buttons */
-.moodButtons button{
-    font-size:28px;
-    margin:8px;
-    padding:14px;
-    border:none;
-    border-radius:50%;
-    cursor:pointer;
-    transition:0.3s;
-}
-
-.moodButtons button:hover{
-    transform:scale(1.3);
-}
-
-/* Hearts */
+/* Floating Hearts */
 .heart{
     position:fixed;
     bottom:-20px;
+    font-size:20px;
     animation: float 6s linear infinite;
 }
 
@@ -93,21 +60,95 @@ section{ padding:50px; }
     100%{ transform:translateY(-100vh);}
 }
 
-/* Miss You Meter */
-#missMeter{
-    width:80%;
-    margin:auto;
-    height:25px;
-    background:#333;
-    border-radius:20px;
-    overflow:hidden;
+/* Popup */
+#popup{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.8);
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-#missFill{
-    height:100%;
-    width:0%;
+#popupContent{
+    background:white;
+    color:black;
+    padding:30px;
+    border-radius:15px;
+}
+
+.clock{ font-size:24px; }
+
+button{
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
     background:pink;
-    transition: width 2s;
+    cursor:pointer;
+}
+
+/* Gradient Verse */
+.gradientVerse{
+    font-size:20px;
+    font-weight:bold;
+    background: linear-gradient(45deg,#ff6b81,#ffd166,#06d6a0,#4cc9f0,#c77dff);
+    background-size:300%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation: gradientMove 6s infinite linear;
+}
+
+@keyframes gradientMove{
+    0%{background-position:0%}
+    100%{background-position:300%}
+}
+
+/* Sparkle */
+.gradientVerse::after{
+    content:" ✨";
+    animation: sparkle 1.5s infinite alternate;
+}
+
+@keyframes sparkle{
+    from{opacity:0.3;}
+    to{opacity:1;}
+}
+
+.verseMessage{
+    font-style:italic;
+    margin-top:10px;
+    color:#ffd6e0;
+}
+
+/* Mood Buttons */
+.moodButtons button{
+    font-size:28px;
+    margin:8px;
+    padding:12px 16px;
+    border:none;
+    border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.moodButtons button:hover{
+    transform:scale(1.3);
+    background:pink;
+}
+
+/* Music Pulse */
+.musicPulse{
+    animation: pulseBeat 1.8s infinite;
+}
+
+@keyframes pulseBeat{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
 }
 
 </style>
@@ -115,7 +156,24 @@ section{ padding:50px; }
 
 <body>
 
-<div id="loveBar"></div>
+<!-- Popup -->
+<div id="popup">
+<div id="popupContent">
+<h2>❤️ A Message For You</h2>
+<p>You crossed my mind today… like you always do.</p>
+<button onclick="closePopup()">Open Website</button>
+</div>
+</div>
+
+<audio id="music" loop>
+<source src="perfect.mp3" type="audio/mp3">
+</audio>
+
+<script>
+document.addEventListener("click", ()=>{
+document.getElementById("music").play();
+});
+</script>
 
 <h1>💖 For Someone Very Special 💖</h1>
 
@@ -123,41 +181,39 @@ section{ padding:50px; }
 <section class="card">
 <h2>⏰ Our Time Together</h2>
 <p>🇰🇪 Your Time</p>
-<div id="kenyaClock"></div>
+<div id="kenyaClock" class="clock"></div>
 
-<p>🇺🇸 My Time</p>
-<div id="usaClock"></div>
+<p>🇺🇸 My Time (Pacific Time)</p>
+<div id="usaClock" class="clock"></div>
 
 <p id="greetingMessage"></p>
+<p id="awakeMessage"></p>
 </section>
 
-<!-- LOVE LETTER -->
+<!-- Love Letter -->
 <section class="card">
-<h2>💌 Message From My Heart</h2>
+<h2>💌 A Message From My Heart</h2>
 <p id="typingLetter"></p>
 </section>
 
-<!-- MISS YOU METER -->
+<!-- Carousel -->
 <section class="card">
-<h2>💞 How Much I Miss You</h2>
-<div id="missMeter">
-<div id="missFill"></div>
+<h2>📷 Memories</h2>
+<div class="carousel">
+<img id="carouselImg" src="photo1.jpeg" onclick="openFullscreen(this.src)">
 </div>
 </section>
 
-<!-- CAROUSEL -->
+<!-- Quiz -->
 <section class="card">
-<h2>📷 Memories</h2>
-<img id="carouselImg" src="photo1.jpeg">
+<h2>🎮 Mini Quiz</h2>
+<p>What makes you special to me?</p>
+<button onclick="quiz(true)">Your heart and personality</button>
+<button onclick="quiz(false)">Just luck</button>
+<p id="quizResult"></p>
 </section>
 
-<!-- DAILY LOVE QUOTE -->
-<section class="card">
-<h2>🌹 Today's Love Quote</h2>
-<p id="loveQuote"></p>
-</section>
-
-<!-- VERSE SECTION -->
+<!-- Scripture -->
 <section class="card">
 <h2>🙏 A Verse For You</h2>
 
@@ -169,7 +225,7 @@ section{ padding:50px; }
 This verse is for you today ❤️
 </p>
 
-<h3>💕 How are you feeling today?</h3>
+<h3>💕 How are you feeling today my love?</h3>
 
 <div class="moodButtons">
 <button onclick="showMoodVerse('happy')">😊</button>
@@ -177,160 +233,150 @@ This verse is for you today ❤️
 <button onclick="showMoodVerse('stressed')">😣</button>
 <button onclick="showMoodVerse('loved')">🥰</button>
 <button onclick="showMoodVerse('tired')">😴</button>
-<button onclick="showMoodVerse('lonely')">💔</button>
-<button onclick="showMoodVerse('hopeful')">🤞</button>
-<button onclick="showMoodVerse('anxious')">😟</button>
 </div>
 
 </section>
 
+<!-- Fullscreen -->
+<div id="fullscreen" onclick="closeFullscreen()">
+<img id="fullImg">
+</div>
+
 <script>
 
-/* Scroll Love Bar */
-window.onscroll = function(){
-let scroll = document.documentElement.scrollTop;
-let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-document.getElementById("loveBar").style.width = (scroll/height)*100 + "%";
-};
+/* Background Colors */
+let colors=["#ff758c","#ff7eb3","#6a11cb","#2575fc","#ff9966"];
+let i=0;
+setInterval(()=>{
+document.body.style.background=colors[i];
+i=(i+1)%colors.length;
+},3000);
+
+/* Popup */
+function closePopup(){
+document.getElementById("popup").style.display="none";
+}
 
 /* Typing Letter */
-let loveText="Distance means so little when someone means so much. You make my days brighter.";
-let i=0;
+let loveText="Even though distance separates us, you are always in my thoughts. You bring peace and happiness into my life. ILYSM 💕💕";
+let letterIndex=0;
 
 function typeLetter(){
-if(i<loveText.length){
-document.getElementById("typingLetter").innerHTML += loveText.charAt(i);
-i++;
+if(letterIndex<loveText.length){
+document.getElementById("typingLetter").innerHTML+=loveText.charAt(letterIndex);
+letterIndex++;
 setTimeout(typeLetter,40);
 }
 }
 typeLetter();
 
-/* Miss You Meter */
-setTimeout(()=>{
-document.getElementById("missFill").style.width="95%";
-},1000);
-
 /* Carousel */
 let photos=["photo1.jpeg","photo2.jpeg","photo3.jpeg","photo4.jpeg"];
 let index=0;
-
 setInterval(()=>{
 index=(index+1)%photos.length;
 document.getElementById("carouselImg").src=photos[index];
 },3000);
 
-/* Floating Hearts */
+/* Fullscreen */
+function openFullscreen(src){
+document.getElementById("fullscreen").style.display="flex";
+document.getElementById("fullImg").src=src;
+}
+function closeFullscreen(){
+document.getElementById("fullscreen").style.display="none";
+}
+
+/* Quiz */
+function quiz(correct){
+document.getElementById("quizResult").innerText=
+correct ? "Exactly ❤️" : "Nooo 😄 You are more than special";
+}
+
+/* Hearts */
 setInterval(()=>{
 let heart=document.createElement("div");
 heart.className="heart";
 heart.innerHTML="❤️";
 heart.style.left=Math.random()*100+"vw";
-heart.style.fontSize=(Math.random()*20+15)+"px";
 document.body.appendChild(heart);
 setTimeout(()=>heart.remove(),6000);
 },800);
 
-/* CLOCK */
+/* CLOCK + GREETING */
 function updateClocks(){
-let kenya=new Date().toLocaleString("en-US",{timeZone:"Africa/Nairobi"});
-let usa=new Date().toLocaleString("en-US",{timeZone:"America/Los_Angeles"});
 
-let kt=new Date(kenya);
-let ut=new Date(usa);
+let kenyaDate=new Date().toLocaleString("en-US",{timeZone:"Africa/Nairobi"});
+let usaDate=new Date().toLocaleString("en-US",{timeZone:"America/Los_Angeles"});
 
-document.getElementById("kenyaClock").innerText=kt.toLocaleTimeString();
-document.getElementById("usaClock").innerText=ut.toLocaleTimeString();
+let kenyaTime=new Date(kenyaDate);
+let usaTime=new Date(usaDate);
 
-let h=kt.getHours();
+document.getElementById("kenyaClock").innerText=kenyaTime.toLocaleTimeString();
+document.getElementById("usaClock").innerText=usaTime.toLocaleTimeString();
 
-document.getElementById("greetingMessage").innerText =
-h<12 ? "🌅 Good Morning Beautiful" :
-h<17 ? "☀️ Good Afternoon" :
-h<21 ? "🌇 Good Evening" :
-"🌙 Good Night Sweet Dreams";
+let h=kenyaTime.getHours();
+
+let greeting =
+h>=5 && h<12 ? "🌅 Good Morning! Blessed day ahead." :
+h>=12 && h<17 ? "☀️ Good Afternoon!" :
+h>=17 && h<21 ? "🌇 Good Evening!" :
+"🌙 Good Night! Sweet dreams.";
+
+document.getElementById("greetingMessage").innerText=greeting;
+
+let usaH=usaTime.getHours();
+let awake=(h>=7 && h<=23 && usaH>=7 && usaH<=23);
+
+document.getElementById("awakeMessage").innerText=
+awake ? "❤️ Looks like we're both awake." :
+"💫 Even when our times differ, you're always in my thoughts.";
 }
 setInterval(updateClocks,1000);
 updateClocks();
 
-/* DAILY LOVE QUOTES */
-let quotes=[
-"You are my favorite thought.",
-"You make distance feel small.",
-"My heart smiles when I think of you.",
-"You are my answered prayer.",
-"You make ordinary days magical."
-];
-
-document.getElementById("loveQuote").innerText =
-quotes[Math.floor(Math.random()*quotes.length)];
-
-/* MOOD VERSES */
+/* Mood Verse System */
 function showMoodVerse(mood){
 
 let verse="";
 let message="";
-let bg="";
 
 if(mood==="happy"){
-verse="Rejoice in the Lord always. — Philippians 4:4";
-message="Your joy is beautiful ❤️";
-bg="#ff758c";
+verse=`"This is the day that the Lord has made; let us rejoice and be glad in it."<br>— Psalm 118:24`;
+message="Your happiness makes my heart smile ❤️";
 }
 
-if(mood==="sad"){
-verse="The Lord is near to the brokenhearted. — Psalm 34:18";
-message="I wish I could hold you 💕";
-bg="#6a11cb";
+else if(mood==="sad"){
+verse=`"The Lord is near to the brokenhearted."<br>— Psalm 34:18`;
+message="Even on hard days, you are never alone 💕";
 }
 
-if(mood==="stressed"){
-verse="Come to me and I will give you rest. — Matthew 11:28";
-message="Breathe… I'm with you in spirit 🤗";
-bg="#2575fc";
+else if(mood==="stressed"){
+verse=`"Come to me, all who labor and are heavy laden, and I will give you rest."<br>— Matthew 11:28`;
+message="I wish I could hug you through the screen 🤗";
 }
 
-if(mood==="loved"){
-verse="Love never fails. — 1 Corinthians 13:8";
-message="You deserve endless love 💖";
-bg="#ff9966";
+else if(mood==="loved"){
+verse=`"I have loved you with an everlasting love."<br>— Jeremiah 31:3`;
+message="You deserve all the love in the world 💖";
 }
 
-if(mood==="tired"){
-verse="He gives strength to the weary. — Isaiah 40:29";
-message="Rest and recharge beautiful soul 😌";
-bg="#4cc9f0";
+else if(mood==="tired"){
+verse=`"He gives power to the faint."<br>— Isaiah 40:29`;
+message="Rest well beautiful soul 😌";
 }
 
-if(mood==="lonely"){
-verse="I am with you always. — Matthew 28:20";
-message="You are never truly alone ❤️";
-bg="#c77dff";
-}
-
-if(mood==="hopeful"){
-verse="For I know the plans I have for you. — Jeremiah 29:11";
-message="Your future is bright ";
-bg="#06d6a0";
-}
-
-if(mood==="anxious"){
-verse="Do not be anxious about anything. — Philippians 4:6";
-message="Everything will be okay 😌";
-bg="#ffd166";
-}
-
-let verseBox=document.getElementById("verseDisplay");
-
-verseBox.style.opacity=0;
-
-setTimeout(()=>{
-verseBox.innerHTML=verse;
+document.getElementById("verseDisplay").innerHTML=verse;
 document.getElementById("verseMessage").innerText=message;
-document.body.style.background=bg;
-verseBox.style.opacity=1;
-},500);
 }
+
+/* Music Pulse */
+let music=document.getElementById("music");
+let verseElement=document.getElementById("verseDisplay");
+
+music.addEventListener("play", ()=>{
+verseElement.classList.add("musicPulse");
+});
 
 </script>
 
