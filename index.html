@@ -458,15 +458,15 @@ section {
   width: 100%; height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.6s;
-  filter: blur(22px) brightness(0.4);
-  transform: scale(1.05);
+  transition: filter 0.8s ease, transform 0.6s ease;
+  filter: blur(18px) brightness(0.35) saturate(0.5);
+  transform: scale(1.06);
   user-select: none;
   pointer-events: none;
 }
 
 .photos-unlocked .slide img {
-  filter: blur(0) brightness(1);
+  filter: blur(0px) brightness(1.1) saturate(1.15) contrast(1.05);
   transform: scale(1);
 }
 
@@ -1101,6 +1101,7 @@ footer {
     <a href="#letter">Letter</a>
     <a href="#memories">Memories</a>
     <a href="#verse">Verse</a>
+    <a href="#game-sec">Game</a>
     <a href="#reasons">Reasons</a>
   </div>
 </nav>
@@ -1289,6 +1290,67 @@ footer {
         <button class="mood-btn" onclick="showMoodVerse('anxious')">😟<span>Anxious</span></button>
       </div>
     </div>
+  </div>
+</section>
+
+<div class="divider" style="max-width:900px; margin:0 auto;">
+  <div class="divider-line"></div>
+  <div class="divider-icon">✦</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- LOVE GAME -->
+<section id="game-sec" class="reveal">
+  <p class="section-label">Play With Me 🎮</p>
+  <h2 class="section-title">Whack the Ex! 😂</h2>
+
+  <div class="glass" id="gameWrap">
+
+    <!-- Start screen -->
+    <div id="gameStart" style="text-align:center; padding:20px 0;">
+      <div style="font-size:70px; margin-bottom:16px;">😤</div>
+      <p style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:8px;">Whack the exes, protect the hearts!</p>
+      <p style="font-size:15px; color:rgba(255,255,255,0.45); font-style:italic; margin-bottom:6px;">😈 Tap the exes to score points</p>
+      <p style="font-size:15px; color:rgba(255,255,255,0.45); font-style:italic; margin-bottom:28px;">💖 Never tap the hearts or you lose a life!</p>
+      <button class="open-btn" onclick="startGame()">Let's Go! 😤💕</button>
+    </div>
+
+    <!-- Game area -->
+    <div id="gameArea" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding:0 4px;">
+        <div>
+          <div style="font-size:11px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.35);">Score</div>
+          <div style="font-family:'Playfair Display',serif; font-size:34px; color:var(--rose);" id="gameScore">0</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:11px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.35);">Time</div>
+          <div style="font-family:'Playfair Display',serif; font-size:34px; color:var(--gold);" id="gameTimer">30</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:11px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.35);">Lives</div>
+          <div id="gameLives" style="font-size:20px;">❤️❤️❤️</div>
+        </div>
+      </div>
+
+      <!-- 3x3 grid of holes -->
+      <div id="moleGrid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px;">
+      </div>
+
+      <div id="comboMsg" style="text-align:center; height:28px; font-family:'Dancing Script',cursive; font-size:22px; color:var(--gold); opacity:0; transition:opacity 0.3s;"></div>
+    </div>
+
+    <!-- Game over -->
+    <div id="gameOver" style="display:none; text-align:center; padding:20px 0;">
+      <div id="gameOverEmoji" style="font-size:64px; margin-bottom:12px;">😤</div>
+      <p style="font-family:'Playfair Display',serif; font-size:26px; color:var(--rose);" id="gameOverTitle">Time's Up!</p>
+      <p style="font-size:17px; margin-top:8px; font-style:italic; color:rgba(255,255,255,0.6);" id="gameOverMsg"></p>
+      <div style="margin:20px 0; padding:20px; background:rgba(255,77,109,0.08); border-radius:14px; border:1px solid rgba(255,77,109,0.15);">
+        <div style="font-size:12px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4);">Final Score</div>
+        <div style="font-family:'Playfair Display',serif; font-size:56px; color:var(--rose);" id="finalScore">0</div>
+      </div>
+      <button class="open-btn" onclick="startGame()">Play Again 😤💕</button>
+    </div>
+
   </div>
 </section>
 
@@ -1850,6 +1912,210 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ==================== WHACK-THE-EX GAME ==================== */
+const HOLE_COUNT = 9;
+const EX_EMOJIS   = ['😈','🤡','😒','🙄','😤','💀','🤮','😡'];
+const GOOD_EMOJIS = ['💖','❤️','🌸','💕','✨','💗'];
+const WHACK_MSGS  = ['WHACKED! 😤','BYE BYE! 👋','Get lost! 🚫','Kicked out! 😂','Gone! 💨','See ya never! 🤣','No thanks! ✌️'];
+const END_MSGS    = [
+  [0,   "Hmm, maybe they got away? 😅"],
+  [30,  "Not bad, babe 💕"],
+  [80,  "You're on fire! 🔥"],
+  [150, "Unstoppable queen! 👑💕"],
+  [250, "LEGENDARY! You whacked them ALL 😤🏆"],
+];
+
+let gScore=0, gLives=3, gTimer=30, gRunning=false;
+let gTimerInterval, gMoleTimeouts=[];
+let gComboCount=0, gComboTimeout;
+let holes=[];
+
+function buildGrid(){
+  const grid = document.getElementById('moleGrid');
+  grid.innerHTML = '';
+  holes = [];
+  for(let i=0;i<HOLE_COUNT;i++){
+    const hole = document.createElement('div');
+    hole.style.cssText = `
+      position:relative; aspect-ratio:1; border-radius:20px;
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden; cursor:none;
+    `;
+    const mole = document.createElement('div');
+    mole.style.cssText = `
+      font-size:clamp(32px,8vw,52px); position:absolute; bottom:-80px;
+      transition:bottom 0.18s cubic-bezier(0.34,1.56,0.64,1);
+      user-select:none; pointer-events:none; filter:drop-shadow(0 0 8px rgba(255,77,109,0.5));
+    `;
+    hole.appendChild(mole);
+    hole.addEventListener('click',  e => whack(i, e));
+    hole.addEventListener('touchstart', e => { e.preventDefault(); whack(i, e); }, {passive:false});
+    grid.appendChild(hole);
+    holes.push({ el:hole, mole, active:false, isGood:false, timer:null });
+  }
+}
+
+function startGame(){
+  document.getElementById('gameStart').style.display='none';
+  document.getElementById('gameOver').style.display='none';
+  document.getElementById('gameArea').style.display='block';
+  gScore=0; gLives=3; gTimer=30; gRunning=true; gComboCount=0;
+  gMoleTimeouts.forEach(clearTimeout); gMoleTimeouts=[];
+  clearInterval(gTimerInterval);
+  buildGrid();
+  updateGameUI();
+  spawnLoop();
+  gTimerInterval = setInterval(()=>{
+    gTimer--;
+    document.getElementById('gameTimer').innerText = gTimer;
+    if(gTimer<=5) document.getElementById('gameTimer').style.color='#ff4444';
+    if(gTimer<=0){ clearInterval(gTimerInterval); endGame(); }
+  },1000);
+}
+
+function spawnLoop(){
+  if(!gRunning) return;
+  const interval = Math.max(500, 1200 - gScore * 2.5);
+  const id = setTimeout(()=>{
+    if(!gRunning) return;
+    spawnMole();
+    spawnLoop();
+  }, interval);
+  gMoleTimeouts.push(id);
+}
+
+function spawnMole(){
+  // pick a random idle hole
+  const idle = holes.map((_,i)=>i).filter(i=>!holes[i].active);
+  if(!idle.length) return;
+  const idx = idle[Math.floor(Math.random()*idle.length)];
+  const h = holes[idx];
+  const isGood = Math.random() < 0.28;
+  h.isGood = isGood;
+  h.active = true;
+  h.mole.innerText = isGood
+    ? GOOD_EMOJIS[Math.floor(Math.random()*GOOD_EMOJIS.length)]
+    : EX_EMOJIS[Math.floor(Math.random()*EX_EMOJIS.length)];
+  h.el.style.borderColor = isGood ? 'rgba(255,77,109,0.3)' : 'rgba(100,100,255,0.2)';
+  h.mole.style.bottom = '6px';
+
+  // auto-hide
+  const stayMs = isGood ? 900 : Math.max(500, 1100 - gScore*2);
+  h.timer = setTimeout(()=>hideMole(idx), stayMs);
+}
+
+function hideMole(idx){
+  const h = holes[idx];
+  h.mole.style.bottom = '-80px';
+  setTimeout(()=>{ h.active=false; h.el.style.borderColor='rgba(255,255,255,0.07)'; }, 220);
+}
+
+function whack(idx, e){
+  if(!gRunning) return;
+  const h = holes[idx];
+  if(!h.active) return;
+  clearTimeout(h.timer);
+
+  if(h.isGood){
+    // Hit a heart — lose life, screen flash red
+    gLives--;
+    gComboCount=0;
+    updateGameUI();
+    flashScreen('#ff000033');
+    spawnPopup('💔 Oops!', e, '#ff4444');
+    hideMole(idx);
+    if(gLives<=0){ clearInterval(gTimerInterval); gRunning=false; endGame(); }
+  } else {
+    // Hit an ex — score!
+    const bonus = Math.min(gComboCount,5)*5;
+    const pts = 10 + bonus;
+    gScore += pts;
+    gComboCount++;
+    clearTimeout(gComboTimeout);
+    gComboTimeout = setTimeout(()=>gComboCount=0, 1500);
+    updateGameUI();
+    spawnPopup('+'+ pts + (bonus>0?' 🔥':''), e, '#ffd166');
+    if(gComboCount>=3) showCombo();
+    // whack animation
+    h.mole.style.bottom = '-80px';
+    h.mole.style.transition = 'bottom 0.08s';
+    setTimeout(()=>{ h.active=false; h.mole.style.transition='bottom 0.18s cubic-bezier(0.34,1.56,0.64,1)'; h.el.style.borderColor='rgba(255,255,255,0.07)'; },100);
+    flashHole(idx);
+  }
+}
+
+function flashHole(idx){
+  const h = holes[idx];
+  h.el.style.background='rgba(255,77,109,0.25)';
+  h.el.style.borderColor='var(--rose)';
+  h.el.style.boxShadow='0 0 20px rgba(255,77,109,0.4)';
+  setTimeout(()=>{
+    h.el.style.background='rgba(255,255,255,0.04)';
+    h.el.style.borderColor='rgba(255,255,255,0.07)';
+    h.el.style.boxShadow='';
+  }, 250);
+}
+
+function flashScreen(color){
+  const flash = document.createElement('div');
+  flash.style.cssText=`position:fixed;inset:0;background:${color};pointer-events:none;z-index:9998;transition:opacity 0.4s;`;
+  document.body.appendChild(flash);
+  setTimeout(()=>{ flash.style.opacity='0'; setTimeout(()=>flash.remove(),400); },50);
+}
+
+function spawnPopup(text, e, color){
+  const el = document.createElement('div');
+  el.innerText = text;
+  const rect = (e.target||e.currentTarget).closest('[style]').getBoundingClientRect();
+  el.style.cssText=`
+    position:fixed; left:${rect.left+rect.width/2}px; top:${rect.top+rect.height/2}px;
+    transform:translate(-50%,-50%); font-family:'Dancing Script',cursive;
+    font-size:22px; font-weight:700; color:${color}; pointer-events:none; z-index:9999;
+    text-shadow:0 0 10px ${color}; animation:floatUp 0.9s ease-out forwards;
+  `;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),900);
+}
+
+function showCombo(){
+  const msgs = ['Double tap! 😤','On a roll! 🔥',`x${gComboCount} COMBO! 💥`,'BEAST MODE! 👑','Can\'t stop! 🤣'];
+  const el = document.getElementById('comboMsg');
+  el.innerText = msgs[Math.min(gComboCount-3, msgs.length-1)];
+  el.style.opacity='1';
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.style.opacity='0', 900);
+}
+
+function updateGameUI(){
+  document.getElementById('gameScore').innerText = gScore;
+  document.getElementById('gameLives').innerText = '❤️'.repeat(Math.max(0,gLives))+'🖤'.repeat(Math.max(0,3-gLives));
+}
+
+function endGame(){
+  gRunning=false;
+  gMoleTimeouts.forEach(clearTimeout);
+  holes.forEach((_,i)=>hideMole(i));
+  setTimeout(()=>{
+    document.getElementById('gameArea').style.display='none';
+    document.getElementById('gameOver').style.display='block';
+    document.getElementById('finalScore').innerText = gScore;
+    const msg = [...END_MSGS].reverse().find(([min])=>gScore>=min);
+    document.getElementById('gameOverMsg').innerText = msg?msg[1]:'You did amazing 💕';
+    document.getElementById('gameOverTitle').innerText = gScore>=200?'👑 LEGEND!':'Time\'s Up! 😤';
+    document.getElementById('gameOverEmoji').innerText = gScore>=200?'🏆':gScore>=80?'😤':'😅';
+    if(gScore>=80){
+      for(let i=0;i<18;i++) setTimeout(()=>{
+        const h=document.createElement('div'); h.className='heart-float';
+        h.innerText=['❤️','💕','💖','✨','😤'][Math.floor(Math.random()*5)];
+        h.style.left=(15+Math.random()*70)+'vw'; h.style.top='55vh';
+        h.style.fontSize=(14+Math.random()*16)+'px'; h.style.animationDuration=(3+Math.random()*3)+'s';
+        document.body.appendChild(h); setTimeout(()=>h.remove(),6000);
+      },i*70);
+    }
+  },600);
+}
 
 /* ==================== CLICK HEARTS ==================== */
 document.addEventListener('click', e => {
